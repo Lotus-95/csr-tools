@@ -106,3 +106,11 @@ class CsrCluster:
 
         with open(save_path, 'wb') as f:
             f.write(ret.content)
+
+    def get_quota(self):
+        api_url = os.path.join(self.base_url, 'user',
+                               self.username, 'virtualGroups')
+        
+        r = self.sess.get(api_url)
+        r.raise_for_status()
+        return json.loads(r.content)

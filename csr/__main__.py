@@ -64,6 +64,20 @@ def download(args, config):
     client = CsrCluster(config['username'], config['passwd'], cluster)
     client.get_nfs_file(filename)
 
+def quota(args, config):
+    cluster = args.cluster
+    client = CsrCluster(config['username'], config['passwd'], cluster)
+    quota_info = client.get_quota()[0]
+
+    from prettytable import PrettyTable
+    table = PrettyTable(['Item', 'Info'])
+    table.add_row(['Jobs', quota_info['activeJobs']])
+    table.add_row(['CPU', quota_info['cpuUsed'] + '/' + quota_info['cpuTotal']])
+    table.add_row(['GPU', quota_info['gpuUsed'][0]['number'] + '/' + quota_info['gpuTotal'][0]['number']])
+    table.add_row(['Memory', quota_info['memoryUsed'] + '/' + quota_info['memoryTotal']])
+    table.add_row(['Storage', quota_info['storageUsed'] + '/' + quota_info['storageTotal']])
+    print(table)
+
 def cmd():
     parser = argparse.ArgumentParser()
     parser.set_defaults(func=main)
@@ -76,6 +90,10 @@ def cmd():
     download_parser.set_defaults(func=download)
     download_parser.add_argument('filename', type=str)
     
+    quota_parser = subparser.add_parser('quota')
+    quota_parser.set_defaults(func=quota)
+    quota_parser.add_argument('cluster', type=str)
+
     args = parser.parse_args()
     if args.func != init:
         with open(os.path.join(os.environ['HOME'], '.csr_config'), 'rb') as f:

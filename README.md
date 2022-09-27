@@ -20,6 +20,12 @@
 
 > $ csr
 
+## 查看集群资源
+
+> $ csr quota v100
+> 
+> $ csr quota 2080ti
+
 ## 下载文件
 
 输入 `csr download cluster:filename` 来快速下载文件，例如：`csr download v100:test.zip`。
