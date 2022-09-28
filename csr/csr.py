@@ -7,18 +7,18 @@ from .utils import download_file
 
 
 class CsrCluster:
-    cluster_port = {
-        '2080ti': 2080,
-        'v100': 3080
+    cluster_host = {
+        '2080ti': '192.168.0.170',
+        'v100': '192.168.0.173'
     }
-    base_url = 'http://gz.csr-biotech.com:{port}/rest-server/api/v1/'
+    base_url = 'http://{host_address}/rest-server/api/v1/'
 
     def __init__(self, username: str,
                  passwd: str,
                  cluster: str = '2080ti'):
-        assert cluster in self.cluster_port, f'unknown cluster {cluster}'
+        assert cluster in self.cluster_host, f'unknown cluster {cluster}'
         self.sess = requests.Session()
-        self.base_url = self.base_url.format(port=self.cluster_port[cluster])
+        self.base_url = self.base_url.format(host_address=self.cluster_host[cluster])
         self.username = username
 
         self._login(username, passwd)
@@ -78,6 +78,7 @@ class CsrCluster:
                                self.username, 'jobs', job_name)
         ret = self.sess.delete(api_url)
         ret.raise_for_status()
+        return json.loads(ret.content)['message']
 
     def download_job_private_key(self, job_name: str, save_path: str = '') -> str:
         private_download_link = self.get_job_ssh_info(job_name)['keyPair']

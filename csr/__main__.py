@@ -78,6 +78,13 @@ def quota(args, config):
     table.add_row(['Storage', quota_info['storageUsed'] + '/' + quota_info['storageTotal']])
     print(table)
 
+def delete(args, config):
+    cluster, job_name = args.job_name.split(':')
+    client = CsrCluster(config['username'], config['passwd'], cluster)
+
+    print(client.delete_job(job_name))
+
+
 def cmd():
     parser = argparse.ArgumentParser()
     parser.set_defaults(func=main)
@@ -94,7 +101,12 @@ def cmd():
     quota_parser.set_defaults(func=quota)
     quota_parser.add_argument('cluster', type=str)
 
+    delete_parser = subparser.add_parser('delete')
+    delete_parser.set_defaults(func=delete)
+    delete_parser.add_argument('job_name', type=str)
+
     args = parser.parse_args()
+
     if args.func != init:
         with open(os.path.join(os.environ['HOME'], '.csr_config'), 'rb') as f:
             config = pickle.load(f)

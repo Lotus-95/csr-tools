@@ -26,12 +26,22 @@
 > 
 > $ csr quota 2080ti
 
+## 删除 job
+
+> $ csr delete cluster:job_name
+> 
+> $ csr delete v100:test_job
+> 
+>  deleted job test_job successfully
+
 ## 下载文件
 
 输入 `csr download cluster:filename` 来快速下载文件，例如：`csr download v100:test.zip`。
 
 ## TODO
 
+ - [x] 删除 job
+ - [x] 查看集群资源
  - [ ] 快速创建新 job
  - [ ] 远程执行指令
  - [ ] 列出文件列表
