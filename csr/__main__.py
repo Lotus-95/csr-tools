@@ -4,13 +4,12 @@ import argparse
 from getpass import getpass
 from csr.csr import CsrCluster
 from csr.utils import get_color_text, clear_shell
+from csr import CsrCluster
+from prettytable import PrettyTable
+from csr.ssh_tunel import ssh_tunel
+from sshconf import read_ssh_config
 
-
-def main(args, config):
-    from csr import CsrCluster
-    from prettytable import PrettyTable
-    from csr.ssh_tunel import ssh_tunel
-
+def get_jobs_info(config):
     username = config['username']
     passwd = config['passwd']
     clusters = config['cluster']
@@ -22,6 +21,11 @@ def main(args, config):
         for i in info:
             i.update({'client': client})
         jobs_info += info
+    
+    return jobs_info
+
+def main(args, config):
+    jobs_info = get_jobs_info(config)
 
     host_table = PrettyTable(['ID', 'Cluster', 'Job Name', 'Status'])
     for i, job in enumerate(jobs_info):
@@ -84,6 +88,28 @@ def delete(args, config):
 
     print(client.delete_job(job_name))
 
+def update_config(args, config):
+    jobs_info = get_jobs_info(config)
+    c = read_ssh_config(os.path.expanduser("~/.ssh/config"))
+    for host in c.hosts():
+        if host.startswith('CSR-'):
+            c.remove(host)
+
+    for job in jobs_info:
+        client = job['client']
+        job_name = job['name']
+        client_name = job['description']['virtualGroup']
+        private_key_file_path = client.download_job_private_key(
+            job_name)
+        host, port = client.get_job_host_port(job_name)
+
+        if job['state'] == 'RUNNING':
+            c.add(f'CSR-{client_name}-{job_name}', Hostname=host,
+                                                   Port=port,
+                                                   User='root',
+                                                   IdentityFile=private_key_file_path)
+        c.save()
+
 
 def cmd():
     parser = argparse.ArgumentParser()
@@ -104,6 +130,9 @@ def cmd():
     delete_parser = subparser.add_parser('delete')
     delete_parser.set_defaults(func=delete)
     delete_parser.add_argument('job_name', type=str)
+
+    update_config_parser = subparser.add_parser('update-config')
+    update_config_parser.set_defaults(func=update_config)
 
     args = parser.parse_args()
 

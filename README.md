@@ -38,6 +38,11 @@
 
 输入 `csr download cluster:filename` 来快速下载文件，例如：`csr download v100:test.zip`。
 
+
+## 将可用的集群加入 ssh_config
+
+输入 `csr update-config` 将所有可用的集群更新到 ssh_config 当中，方便使用 vscode 等工具连接集群。
+
 ## TODO
 
  - [x] 删除 job
@@ -47,4 +52,5 @@
  - [ ] 列出文件列表
  - [ ] 上传文件
  - [ ] 快速启动多个实验
- - [ ] 生成 ssh config 用于 vscode 和 pycharm 连接
+ - [x] 生成 ssh config 用于 vscode 和 pycharm 连接
+ - [ ] 修改 private key 的保存方式

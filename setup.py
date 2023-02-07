@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 DEPENDENCIES = [
     'tqdm',
     'prettytable',
-    'requests'
+    'requests',
+    'sshconf'
 ]
 
 setup(
