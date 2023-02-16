@@ -107,7 +107,8 @@ def update_config(args, config):
             c.add(f'CSR-{client_name}-{job_name}', Hostname=host,
                                                    Port=port,
                                                    User='root',
-                                                   IdentityFile=private_key_file_path)
+                                                   IdentityFile=private_key_file_path,
+                                                   ProxyCommand='nc -X 5 -x localhost:1080 %h %p')
         c.save()
 
 

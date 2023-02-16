@@ -8,8 +8,8 @@ from .utils import download_file
 
 class CsrCluster:
     cluster_host = {
-        '2080ti': '192.168.0.170',
-        'v100': '192.168.0.173'
+        '2080ti': 'gz.csr-biotech.com:2080', # '192.168.0.170',
+        'v100': 'gz.csr-biotech.com:3080', # '192.168.0.173'
     }
     base_url = 'http://{host_address}/rest-server/api/v1/'
 
@@ -17,7 +17,12 @@ class CsrCluster:
                  passwd: str,
                  cluster: str = '2080ti'):
         assert cluster in self.cluster_host, f'unknown cluster {cluster}'
+        self.proxies = {
+            'http': 'socks5://127.0.0.1:1080',
+            'http': 'socks5://127.0.0.1:1080'
+        }
         self.sess = requests.Session()
+        # self.sess.proxies = self.proxies
         self.base_url = self.base_url.format(host_address=self.cluster_host[cluster])
         self.username = username
 
@@ -26,7 +31,7 @@ class CsrCluster:
     def _login(self, username, passwd) -> bool:
         data = dict(username=username, password=passwd)
         api_url = os.path.join(self.base_url, 'token')
-        ret = self.sess.post(api_url, data=data)
+        ret = self.sess.post(api_url, data=data, proxies=self.proxies)
         ret.raise_for_status()
 
         token = json.loads(ret.content)['token']
@@ -102,7 +107,7 @@ class CsrCluster:
         download_file(self.sess, api_url)
 
     def _download(self, file_url: str, save_path: str):
-        ret = self.sess.get(file_url)
+        ret = self.sess.get(file_url, proxies=self.proxies)
         ret.raise_for_status()
 
         with open(save_path, 'wb') as f:

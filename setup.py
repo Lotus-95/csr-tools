@@ -4,7 +4,8 @@ DEPENDENCIES = [
     'tqdm',
     'prettytable',
     'requests',
-    'sshconf'
+    'sshconf',
+    'pysocks'
 ]
 
 setup(
