@@ -108,7 +108,7 @@ def update_config(args, config):
                                                    Port=port,
                                                    User='root',
                                                    IdentityFile=private_key_file_path,
-                                                   ProxyCommand='nc -X 5 -x localhost:1080 %h %p')
+                                                   ProxyCommand='nc -X 5 -x 127.0.0.1:1080 %h %p')
         c.save()
 
 
