@@ -47,6 +47,14 @@ def main(args, config):
         print(host_table)
         connect_to_id = int(input('Input host id: '))
 
+def job_list(args, config):
+    jobs_info = get_jobs_info(config)
+
+    for i, job in enumerate(jobs_info):
+        print(job['description']['virtualGroup'],
+              job['name'],
+              job['state'])
+
 def init(args, config):
     username = input("username: ")
     passwd = getpass("password: ")
@@ -134,6 +142,9 @@ def cmd():
 
     update_config_parser = subparser.add_parser('update-config')
     update_config_parser.set_defaults(func=update_config)
+
+    job_list_parser = subparser.add_parser('job-list')
+    job_list_parser.set_defaults(func=job_list)
 
     args = parser.parse_args()
 
