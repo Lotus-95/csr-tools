@@ -9,6 +9,18 @@ from prettytable import PrettyTable
 from csr.ssh_tunel import ssh_tunel
 from sshconf import read_ssh_config
 
+
+def submit_job(args, config):
+    username = config['username']
+    passwd = config['passwd']
+    cluster = args.cluster
+    client = CsrCluster(username, passwd, cluster)
+    status = client.submit_job(args.job_config)
+    if status is None:
+        print('Submit Successful')
+    else:
+        print(status)
+
 def get_jobs_info(config):
     username = config['username']
     passwd = config['passwd']
@@ -145,6 +157,11 @@ def cmd():
 
     job_list_parser = subparser.add_parser('job-list')
     job_list_parser.set_defaults(func=job_list)
+
+    submit_job_parser = subparser.add_parser('submit-job')
+    submit_job_parser.set_defaults(func=submit_job)
+    submit_job_parser.add_argument('cluster', type=str)
+    submit_job_parser.add_argument('job_config', type=str)
 
     args = parser.parse_args()
 

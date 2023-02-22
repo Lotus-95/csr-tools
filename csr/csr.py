@@ -66,6 +66,15 @@ class CsrCluster:
 
         return json.loads(ret.content)
 
+    def submit_job(self, job_config_path: str) -> Dict:
+        api_url = os.path.join(self.base_url, 'user',
+                               self.username, 'jobs')
+        headers = self.sess.headers.copy()
+        headers['Content-Type'] = 'application/json'
+        ret = self.sess.post(api_url, headers=headers, data=json.dumps(json.load(open(job_config_path, 'r'))))
+        ret.encoding = ret.apparent_encoding
+        return None if ret.status_code == 201 else ret.text
+
     def get_job_ssh_info(self, job_name: str) -> Dict:
         api_url = os.path.join(self.base_url, 'user',
                                self.username, 'jobs', job_name, 'ssh')
