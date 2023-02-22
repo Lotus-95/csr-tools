@@ -31,7 +31,7 @@ class CsrCluster:
     def _login(self, username, passwd) -> bool:
         data = dict(username=username, password=passwd)
         api_url = os.path.join(self.base_url, 'token')
-        ret = self.sess.post(api_url, data=data, proxies=self.proxies)
+        ret = self.sess.post(api_url, data=data)
         ret.raise_for_status()
 
         token = json.loads(ret.content)['token']
