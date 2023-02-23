@@ -91,7 +91,6 @@ class CsrCluster:
         api_url = os.path.join(self.base_url, 'user',
                                self.username, 'jobs', job_name)
         ret = self.sess.delete(api_url)
-        ret.raise_for_status()
         return json.loads(ret.content)['message']
 
     def download_job_private_key(self, job_name: str, save_path: str = '') -> str:
